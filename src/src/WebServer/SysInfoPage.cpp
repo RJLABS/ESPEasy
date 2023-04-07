@@ -45,7 +45,7 @@
 
 #if FEATURE_MQTT
 # include "../Globals/MQTT.h"
-# include "../Helpers/PeriodicalActions.h" // For finding enabled MQTT controller
+# include "../ESPEasyCore/Controller.h" // For finding enabled MQTT controller
 #endif
 
 #ifdef ESP32
@@ -475,9 +475,7 @@ void handle_sysinfo_WiFiSettings() {
   addTableSeparator(F("WiFi Settings"), 2, 3);
   addRowLabelValue(LabelType::FORCE_WIFI_BG);
   addRowLabelValue(LabelType::RESTART_WIFI_LOST_CONN);
-# ifdef ESP8266
   addRowLabelValue(LabelType::FORCE_WIFI_NOSLEEP);
-# endif // ifdef ESP8266
 # ifdef SUPPORT_ARP
   addRowLabelValue(LabelType::PERIODICAL_GRAT_ARP);
 # endif // ifdef SUPPORT_ARP
@@ -494,6 +492,8 @@ void handle_sysinfo_WiFiSettings() {
   addRowLabelValue(LabelType::FORCE_ESPEASY_NOW_CHANNEL);
 #endif
   addRowLabelValue(LabelType::WIFI_USE_LAST_CONN_FROM_RTC);
+  addRowLabelValue(LabelType::WAIT_WIFI_CONNECT);
+  addRowLabelValue(LabelType::SDK_WIFI_AUTORECONNECT);
 }
 #endif
 

@@ -107,6 +107,13 @@ void handle_advanced() {
     Settings.EnableTimingStats(isFormItemChecked(LabelType::ENABLE_TIMING_STATISTICS));
     Settings.AllowTaskValueSetAllPlugins(isFormItemChecked(LabelType::TASKVALUESET_ALL_PLUGINS));
     Settings.EnableClearHangingI2Cbus(isFormItemChecked(LabelType::ENABLE_CLEAR_HUNG_I2C_BUS));
+    #if FEATURE_I2C_DEVICE_CHECK
+    Settings.CheckI2Cdevice(isFormItemChecked(LabelType::ENABLE_I2C_DEVICE_CHECK));
+    #endif // if FEATURE_I2C_DEVICE_CHECK
+
+    Settings.WaitWiFiConnect(isFormItemChecked(LabelType::WAIT_WIFI_CONNECT));
+    Settings.SDK_WiFi_autoreconnect(isFormItemChecked(LabelType::SDK_WIFI_AUTORECONNECT));
+
 
 #ifndef BUILD_NO_RAM_TRACKER
     Settings.EnableRAMTracking(isFormItemChecked(LabelType::ENABLE_RAM_TRACKING));
@@ -251,6 +258,9 @@ void handle_advanced() {
 
   addFormCheckBox(LabelType::TASKVALUESET_ALL_PLUGINS, Settings.AllowTaskValueSetAllPlugins());
   addFormCheckBox(LabelType::ENABLE_CLEAR_HUNG_I2C_BUS, Settings.EnableClearHangingI2Cbus());
+  #if FEATURE_I2C_DEVICE_CHECK
+  addFormCheckBox(LabelType::ENABLE_I2C_DEVICE_CHECK, Settings.CheckI2Cdevice());
+  #endif // if FEATURE_I2C_DEVICE_CHECK
 
   # ifndef NO_HTTP_UPDATER
   addFormCheckBox(LabelType::ALLOW_OTA_UNLIMITED, Settings.AllowOTAUnlimited());
@@ -282,20 +292,11 @@ void handle_advanced() {
   #endif // if FEATURE_SSDP
 
   addFormNumericBox(LabelType::CONNECTION_FAIL_THRESH, Settings.ConnectionFailuresThreshold, 0, 100);
-#ifdef ESP8266
   addFormCheckBox(LabelType::FORCE_WIFI_BG, Settings.ForceWiFi_bg_mode());
-#endif // ifdef ESP8266
-#ifdef ESP32
-
-  // Disabled for now, since it is not working properly.
-  addFormCheckBox_disabled(LabelType::FORCE_WIFI_BG, Settings.ForceWiFi_bg_mode());
-#endif // ifdef ESP32
 
   addFormCheckBox(LabelType::RESTART_WIFI_LOST_CONN, Settings.WiFiRestart_connection_lost());
-#ifdef ESP8266
   addFormCheckBox(LabelType::FORCE_WIFI_NOSLEEP,     Settings.WifiNoneSleep());
   addFormNote(F("Change WiFi sleep settings requires reboot to activate"));
-#endif
 #ifdef SUPPORT_ARP
   addFormCheckBox(LabelType::PERIODICAL_GRAT_ARP, Settings.gratuitousARP());
 #endif // ifdef SUPPORT_ARP
@@ -327,6 +328,10 @@ void handle_advanced() {
     addFormNote(F("Number of extra times to scan all channels to have higher chance of finding the desired AP"));
   }
   addFormCheckBox(LabelType::WIFI_USE_LAST_CONN_FROM_RTC, Settings.UseLastWiFiFromRTC());
+
+
+  addFormCheckBox(LabelType::WAIT_WIFI_CONNECT,      Settings.WaitWiFiConnect());
+  addFormCheckBox(LabelType::SDK_WIFI_AUTORECONNECT, Settings.SDK_WiFi_autoreconnect());
 
 
 
