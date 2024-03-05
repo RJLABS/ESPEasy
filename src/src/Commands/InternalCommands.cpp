@@ -309,6 +309,9 @@ bool InternalCommands::executeInternalCommand()
     case ESPEasy_cmd_e::i2cscanner:                 COMMAND_CASE_R(Command_i2c_Scanner, -1);                 // i2c.h
     case ESPEasy_cmd_e::inc:                        COMMAND_CASE_A(Command_Rules_Inc,   -1);                 // Rules.h
     case ESPEasy_cmd_e::ip:                         COMMAND_CASE_R(Command_IP,           1);                 // Network Command
+#if FEATURE_USE_IPV6
+    case ESPEasy_cmd_e::ip6:                        COMMAND_CASE_A(Command_show_all_IP6,           0);                 // Network Command
+#endif
 #ifndef BUILD_NO_DIAGNOSTIC_COMMANDS
     case ESPEasy_cmd_e::jsonportstatus:             COMMAND_CASE_A(Command_JSONPortStatus, -1);              // Diagnostic.h
 #endif // ifndef BUILD_NO_DIAGNOSTIC_COMMANDS
@@ -380,6 +383,7 @@ bool InternalCommands::executeInternalCommand()
     case ESPEasy_cmd_e::pulse:                      COMMAND_CASE_A(Command_GPIO_Pulse,        3);                 // GPIO.h
 #if FEATURE_MQTT
     case ESPEasy_cmd_e::publish:                    COMMAND_CASE_A(Command_MQTT_Publish,     -1);                 // MQTT.h
+    case ESPEasy_cmd_e::publishr:                   COMMAND_CASE_A(Command_MQTT_PublishR,    -1);                 // MQTT.h
 #endif // if FEATURE_MQTT
 #if FEATURE_PUT_TO_HTTP
     case ESPEasy_cmd_e::puttohttp:                  COMMAND_CASE_A(Command_HTTP_PutToHTTP,  -1);                  // HTTP.h

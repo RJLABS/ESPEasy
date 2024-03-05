@@ -305,12 +305,12 @@ void checkUDP()
             if (loglevelActiveFor(LOG_LEVEL_DEBUG)) {
               addLogMove(LOG_LEVEL_DEBUG,  
                 strformat(F("UDP  : %s  Command: %s"), 
-                  formatIP(remoteIP).c_str(), 
+                  formatIP(remoteIP, true).c_str(), 
                   wrapWithQuotesIfContainsParameterSeparatorChar(String(&packetBuffer[0])).c_str()
                   ));
             }
             #endif
-            ExecuteCommand_all(EventValueSource::Enum::VALUE_SOURCE_SYSTEM, &packetBuffer[0]);
+            ExecuteCommand_all({EventValueSource::Enum::VALUE_SOURCE_SYSTEM, &packetBuffer[0]}, true);
           }
           else
           {
@@ -346,7 +346,7 @@ void checkUDP()
                         formatIP(remoteIP).c_str(), 
                         received.unit,
                         received.STA_MAC().toString().c_str(), 
-                        formatIP(received.IP()).c_str(), 
+                        formatIP(received.IP(), true).c_str(), 
                         received.unit));
                   }
 
@@ -1313,6 +1313,7 @@ String getCNonce(const int len) {
   String s;
 
   for (int i = 0; i < len; ++i) {
+    // FIXME TD-er: Is this "-1" correct? The mod operator makes sure we never reach the sizeof index
     s += alphanum[rand() % (sizeof(alphanum) - 1)];
   }
 
@@ -1350,21 +1351,22 @@ String getDigestAuth(const String& authReq,
   md5.begin();
   md5.add(h1 + ':' + nonce + ':' + String(nc) + ':' + cNonce + F(":auth:") + h2);
   md5.calculate();
-  const String response = md5.toString();
 
-  const String authorization =
-    String(F("Digest username=\"")) + username +
-    F("\", realm=\"") + realm +
-    F("\", nonce=\"") + nonce +
-    F("\", uri=\"") + uri +
-    F("\", algorithm=\"MD5\", qop=auth, nc=") + String(nc) +
-    F(", cnonce=\"") + cNonce +
-    F("\", response=\"") + response +
-    '"';
-
-  //  ESPEASY_SERIAL_CONSOLE_PORT.println(authorization);
-
-  return authorization;
+  // return authorization
+  return strformat(
+    F("Digest username=\"%s\""
+    ", realm=\"%s\""
+    ", nonce=\"%s\""
+    ", uri=\"%s\""
+    ", algorithm=\"MD5\", qop=auth, nc=%s, cnonce=\"%s\""
+    ", response=\"%s\""),
+    username.c_str(),
+    realm.c_str(),
+    nonce.c_str(),
+    uri.c_str(),
+    nc,
+    cNonce.c_str(),
+    md5.toString().c_str()); // response
 }
 
 #ifndef BUILD_NO_DEBUG
@@ -1558,12 +1560,48 @@ int http_authenticate(const String& logIdentifier,
   if (Settings.UseRules) {
     // Generate event with the HTTP return code
     // e.g. http#hostname=401
-    String event = F("http#");
-    event += host;
-    event += '=';
-    event += httpCode;
-    eventQueue.addMove(std::move(event));
+    eventQueue.addMove(strformat(F("http#%s=%d"), host.c_str(), httpCode));
+    
+    #if FEATURE_THINGSPEAK_EVENT
+      // Generate event with the response of a 
+      // thingspeak request (https://de.mathworks.com/help/thingspeak/readlastfieldentry.html &
+      // https://de.mathworks.com/help/thingspeak/readdata.html)
+      // e.g. command for a specific field: "sendToHTTP,api.thingspeak.com,80,/channels/1637928/fields/5/last.csv"
+      // command for all fields: "sendToHTTP,api.thingspeak.com,80,/channels/1637928/feeds/last.csv"
+      // where first eventvalue is the channel number and the second to the nineth event values 
+      // are the field values
+      // Example of the event: "EVENT: ThingspeakReply=1637928,5,24.2,12,900,..."
+      //                                                  ^    ^ └------┬------┘
+      //                                   channel number ┘    |        └ received values
+      //                                                   field number (only available for a "single-value-event")
+      // In rules you can grep the reply by "On ThingspeakReply Do ..."
+      //-----------------------------------------------------------------------------------------------------------------------------
+      // 2024-02-05 - Added the option to get a single value of a field or all values of a channel at a certain time (not only the last entry)
+      // Examples:
+      // Single channel: "sendtohttp,api.thingspeak.com,80,channels/1637928/fields/1.csv?end=2024-01-01%2023:59:00&results=1"
+      // => gets the value of field 1 at (or the last entry before) 23:59:00 of the channel 1637928
+      // All channels: "sendtohttp,api.thingspeak.com,80,channels/1637928/feeds.csv?end=2024-01-01%2023:59:00&results=1"
+      // => gets the value of each field of the channel 1637928 at (or the last entry before) 23:59:00 
+      //-----------------------------------------------------------------------------------------------------------------------------
+
+    if (httpCode == 200 && equals(host, F("api.thingspeak.com")) && (uri.endsWith(F("/last.csv")) || (uri.indexOf(F("results=1")) >= 0 && uri.indexOf(F(".csv")) >= 0))){
+      String result = http.getString();
+      result.replace(' ', '_'); // if using a single field with a certain time, the result contains a space and would break the code
+      const int posTimestamp = result.lastIndexOf(':');
+      if (posTimestamp >= 0){
+        result = parseStringToEndKeepCase(result.substring(posTimestamp), 3);
+        if (uri.indexOf(F("fields")) >= 0){                                                                           // when there is a single field call add the field number before the value
+          result = parseStringKeepCase(uri, 4, '/').substring(0, 1) + "," + result; // since the field number is always the fourth part of the url and is always a single digit, we can use this to extact the fieldnumber
+        }
+        eventQueue.addMove(strformat(
+            F("ThingspeakReply=%s,%s"),
+            parseStringKeepCase(uri, 2, '/').c_str(),
+            result.c_str()));
+      }
+    }
+    #endif
   }
+
 #ifndef BUILD_NO_DEBUG
   log_http_result(http, logIdentifier, host + ':' + port, HttpMethod, httpCode, EMPTY_STRING);
 #endif
@@ -1804,6 +1842,7 @@ bool downloadFirmware(const String& url, String& file_save, String& user, String
 {
   WiFiClient client;
   HTTPClient http;
+  error.clear();
 
   if (!start_downloadFile(client, http, url, file_save, user, pass, error)) {
     return false;
@@ -1820,7 +1859,7 @@ bool downloadFirmware(const String& url, String& file_save, String& user, String
     // get tcp stream
     WiFiClient *stream = &client;
 
-    while (http.connected() && (len > 0 || len == -1)) {
+    while (error.isEmpty() && http.connected() && (len > 0 || len == -1)) {
       // read up to downloadBuffSize at a time.
       size_t bytes_to_read = downloadBuffSize;
 
@@ -1835,11 +1874,7 @@ bool downloadFirmware(const String& url, String& file_save, String& user, String
         if (Update.write(buff, c) != c) {
           error  = strformat(F("Error saving firmware update: %s %d Bytes written"),
                              file_save.c_str(), bytesWritten);
-          addLog(LOG_LEVEL_ERROR, error);
-          Update.end();
-          http.end();
-          client.stop();
-          return false;
+          break;
         }
         bytesWritten += c;
 
@@ -1848,12 +1883,7 @@ bool downloadFirmware(const String& url, String& file_save, String& user, String
 
       if (timeOutReached(timeout)) {
         error  = concat(F("Timeout: "), file_save);
-        addLog(LOG_LEVEL_ERROR, error);
-        delay(0);
-        Update.end();
-        http.end();
-        client.stop();
-        return false;
+        break;
       }
 
       if (!UseRTOSMultitasking) {
@@ -1862,30 +1892,52 @@ bool downloadFirmware(const String& url, String& file_save, String& user, String
       }
       backgroundtasks();
     }
-    http.end();
-    client.stop();
-
-    if (loglevelActiveFor(LOG_LEVEL_INFO)) {
-      addLog(LOG_LEVEL_INFO, strformat(F("downloadFile: %s Success"), file_save.c_str()));
-    }
-
-    if (Update.end()) {
-      if (Settings.UseRules) {
-        eventQueue.addMove(concat(F("ProvisionFirmware#success="), file_save));
-      }
-    }
-    return true;
   }
   http.end();
   client.stop();
-  Update.end();
-  error  = concat(F("Failed update firmware: "), file_save);
-  addLog(LOG_LEVEL_ERROR, error);
+
+  if (error.isEmpty() && loglevelActiveFor(LOG_LEVEL_INFO)) {
+    addLog(LOG_LEVEL_INFO, strformat(F("downloadFile: %s Success"), file_save.c_str()));
+  }
+
+  uint8_t errorcode = 0;
+  if (!Update.end()) {
+    errorcode = Update.getError();
+#ifdef ESP32
+    const __FlashStringHelper * err_fstr = F("Unknown");
+    switch (errorcode) {
+      case UPDATE_ERROR_OK:                  err_fstr = F("OK");           break;
+      case UPDATE_ERROR_WRITE:               err_fstr = F("WRITE");        break;
+      case UPDATE_ERROR_ERASE:               err_fstr = F("ERASE");        break;
+      case UPDATE_ERROR_READ:                err_fstr = F("READ");         break;
+      case UPDATE_ERROR_SPACE:               err_fstr = F("SPACE");        break;
+      case UPDATE_ERROR_SIZE:                err_fstr = F("SIZE");         break;
+      case UPDATE_ERROR_STREAM:              err_fstr = F("STREAM");       break;
+      case UPDATE_ERROR_MD5:                 err_fstr = F("MD5");          break;
+      case UPDATE_ERROR_MAGIC_BYTE:          err_fstr = F("MAGIC_BYTE");   break;
+      case UPDATE_ERROR_ACTIVATE:            err_fstr = F("ACTIVATE");     break;
+      case UPDATE_ERROR_NO_PARTITION:        err_fstr = F("NO_PARTITION"); break;
+      case UPDATE_ERROR_BAD_ARGUMENT:        err_fstr = F("BAD_ARGUMENT"); break;
+      case UPDATE_ERROR_ABORT:               err_fstr = F("ABORT");        break;
+    }
+    error += concat(F(" Error: "), err_fstr);
+#else
+    error += concat(F(" Error: "), errorcode);
+#endif
+  } else {
+    if (Settings.UseRules) {
+      eventQueue.addMove(concat(F("ProvisionFirmware#success="), file_save));
+    }
+    return true;
+  }
+
+  backgroundtasks();
+  if (loglevelActiveFor(LOG_LEVEL_ERROR)) {
+    addLog(LOG_LEVEL_ERROR, concat(F("Failed update firmware: "), error));
+  }
 
   if (Settings.UseRules) {
-    String event = F("ProvisionFirmware#failed=");
-    event += file_save;
-    eventQueue.addMove(std::move(event));
+    eventQueue.addMove(concat(F("ProvisionFirmware#failed="), file_save));
   }
   return false;
 }

@@ -269,6 +269,7 @@ const __FlashStringHelper * getLabel(LabelType::Enum label) {
     case LabelType::ETH_STATE:              return F("Eth State");
     case LabelType::ETH_SPEED_STATE:        return F("Eth Speed State");
     case LabelType::ETH_CONNECTED:          return F("Eth connected");
+    case LabelType::ETH_CHIP:               return F("Eth chip");
 #endif // if FEATURE_ETHERNET
 # if FEATURE_ETHERNET || defined(USES_ESPEASY_NOW)
     case LabelType::ETH_WIFI_MODE:          return F("Network Type");
@@ -436,10 +437,10 @@ String getValue(LabelType::Enum label) {
     case LabelType::IP_ADDRESS_SUBNET:      return strformat(F("%s / %s"), getValue(LabelType::IP_ADDRESS).c_str(), getValue(LabelType::IP_SUBNET).c_str());
     case LabelType::GATEWAY:                return formatIP(NetworkGatewayIP());
 #if FEATURE_USE_IPV6
-    case LabelType::IP6_LOCAL:              return formatIP(NetworkLocalIP6());
+    case LabelType::IP6_LOCAL:              return formatIP(NetworkLocalIP6(), true);
     case LabelType::IP6_GLOBAL:             return formatIP(NetworkGlobalIP6());
 #if FEATURE_ETHERNET
-    case LabelType::ETH_IP6_LOCAL:          return formatIP(NetworkLocalIP6());
+    case LabelType::ETH_IP6_LOCAL:          return formatIP(NetworkLocalIP6(), true);
 #endif
 /*
     case LabelType::IP6_ALL_ADDRESSES:
@@ -457,7 +458,7 @@ String getValue(LabelType::Enum label) {
     }
 */
 #endif
-    case LabelType::CLIENT_IP:              return formatIP(web_server.client().remoteIP());
+    case LabelType::CLIENT_IP:              return formatIP(web_server.client().remoteIP(), true);
     #if FEATURE_INTERNAL_TEMPERATURE
     case LabelType::INTERNAL_TEMPERATURE:   return toString(getInternalTemperature());
     #endif // if FEATURE_INTERNAL_TEMPERATURE
@@ -507,7 +508,7 @@ String getValue(LabelType::Enum label) {
     case LabelType::WAIT_WIFI_CONNECT:      return jsonBool(Settings.WaitWiFiConnect());
     case LabelType::CONNECT_HIDDEN_SSID:    return jsonBool(Settings.IncludeHiddenSSID());
     case LabelType::HIDDEN_SSID_SLOW_CONNECT: return jsonBool(Settings.HiddenSSID_SlowConnectPerBSSID());
-    case LabelType::SDK_WIFI_AUTORECONNECT: return jsonBool(Settings.WifiNoneSleep());
+    case LabelType::SDK_WIFI_AUTORECONNECT: return jsonBool(Settings.SDK_WiFi_autoreconnect());
 
     case LabelType::BUILD_DESC:             return getSystemBuildString();
     case LabelType::GIT_BUILD:
@@ -583,6 +584,7 @@ String getValue(LabelType::Enum label) {
     case LabelType::ETH_STATE:              return EthLinkUp() ? F("Link Up") : F("Link Down");
     case LabelType::ETH_SPEED_STATE:        return EthLinkUp() ? getEthLinkSpeedState() : F("Link Down");
     case LabelType::ETH_CONNECTED:          return ETHConnected() ? F("CONNECTED") : F("DISCONNECTED"); // 0=disconnected, 1=connected
+    case LabelType::ETH_CHIP:               return toString(Settings.ETH_Phy_Type);
 #endif // if FEATURE_ETHERNET
 # if FEATURE_ETHERNET || defined(USES_ESPEASY_NOW)
     case LabelType::ETH_WIFI_MODE:          return toString(active_network_medium);

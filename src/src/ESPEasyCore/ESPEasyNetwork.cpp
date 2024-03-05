@@ -239,7 +239,7 @@ bool IPv6_from_MAC(const MAC_address& mac, IPAddress& ipv6)
   addLog(LOG_LEVEL_INFO, strformat(
      F("IPv6_from_MAC: Mac %s IP %s"),
      mac.toString().c_str(),
-     ipv6.toString().c_str()
+     ipv6.toString(true).c_str()
      ));
 */
   return true;
@@ -398,7 +398,7 @@ bool EthFullDuplex()
 bool EthLinkUp()
 {
   if (EthEventData.ethInitSuccess) {
-    #ifdef ESP_IDF_VERSION_MAJOR
+    #if ESP_IDF_VERSION_MAJOR < 5
     // FIXME TD-er: See: https://github.com/espressif/arduino-esp32/issues/6105
     return EthEventData.EthConnected();
     #else
