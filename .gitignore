@@ -19,7 +19,7 @@ pre_extra_script.py
 
 ## Project #####################
 lib/readme.txt
-src/Custom.h
+src/Custom_old.h
 /ESPEasy
 test/output_export.cpp
 .vscode

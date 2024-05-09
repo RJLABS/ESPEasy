@@ -18,7 +18,7 @@
 
 # define PLUGIN_085
 # define PLUGIN_ID_085 85
-# define PLUGIN_NAME_085 "Energy - AccuEnergy AcuDC24x"
+# define PLUGIN_NAME_085 "NPK SENSOR 3P"
 # define PLUGIN_VALUENAME1_085 ""
 
 
@@ -28,7 +28,7 @@ boolean Plugin_085(uint8_t function, struct EventStruct *event, String& string) 
   switch (function) {
     case PLUGIN_DEVICE_ADD: {
       Device[++deviceCount].Number           = PLUGIN_ID_085;
-      Device[deviceCount].Type               = DEVICE_TYPE_SERIAL_PLUS1; // connected through 3 datapins
+      Device[deviceCount].Type               = DEVICE_TYPE_SERIAL_PLUS1; // connected through 2 datapins
       Device[deviceCount].VType              = Sensor_VType::SENSOR_TYPE_QUAD;
       Device[deviceCount].Ports              = 0;
       Device[deviceCount].PullUpOption       = false;

@@ -33,7 +33,7 @@
 
 # define P085_DEV_ID_DFLT   1       // Modbus communication address
 # define P085_MODEL_DFLT    0       // AcuDC24x
-# define P085_BAUDRATE_DFLT 4       // 19200 baud
+# define P085_BAUDRATE_DFLT 2       // 4800 baud
 # define P085_QUERY1_DFLT   P085_QUERY_V
 # define P085_QUERY2_DFLT   P085_QUERY_A
 # define P085_QUERY3_DFLT   P085_QUERY_W

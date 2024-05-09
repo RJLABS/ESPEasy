@@ -17,9 +17,9 @@ bool P085_data_struct::init(ESPEasySerialPort port, const int16_t serial_rx, con
 
 const __FlashStringHelper* Plugin_085_valuename(uint8_t value_nr, bool displayString) {
   switch (value_nr) {
-    case P085_QUERY_V:      return displayString ? F("Voltage (V)") : F("V");
-    case P085_QUERY_A:      return displayString ? F("Current (A)") : F("A");
-    case P085_QUERY_W:      return displayString ? F("Power (W)") : F("W");
+    case P085_QUERY_V:      return displayString ? F("Nitrogen (V)") : F("V");
+    case P085_QUERY_A:      return displayString ? F("Phosphorus (A)") : F("A");
+    case P085_QUERY_W:      return displayString ? F("Potassium (W)") : F("W");
     case P085_QUERY_Wh_imp: return displayString ? F("Import Energy (Wh)") : F("Wh_imp");
     case P085_QUERY_Wh_exp: return displayString ? F("Export Energy (Wh)") : F("Wh_exp");
     case P085_QUERY_Wh_tot: return displayString ? F("Total Energy (Wh)") : F("Wh_tot");
@@ -55,11 +55,11 @@ float p085_readValue(uint8_t query, struct EventStruct *event) {
   if ((nullptr != P085_data) && P085_data->isInitialized()) {
     switch (query) {
       case P085_QUERY_V:
-        return P085_data->modbus.read_float_HoldingRegister(0x200);
+        return P085_data->modbus.read_float_HoldingRegister(0x001E); //nitrogen
       case P085_QUERY_A:
-        return P085_data->modbus.read_float_HoldingRegister(0x202);
+        return P085_data->modbus.read_float_HoldingRegister(0x001F); //posphore
       case P085_QUERY_W:
-        return P085_data->modbus.read_float_HoldingRegister(0x204) * 1000.0f; // power (kW => W)
+        return P085_data->modbus.read_float_HoldingRegister(0x0020); //pottasium // power (kW => W)
       case P085_QUERY_Wh_imp:
         return P085_data->modbus.read_32b_HoldingRegister(0x300) * 10.0f;     // 0.01 kWh => Wh
       case P085_QUERY_Wh_exp:
