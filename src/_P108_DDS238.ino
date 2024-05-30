@@ -28,7 +28,7 @@
 
 # define PLUGIN_108
 # define PLUGIN_ID_108 108
-# define PLUGIN_NAME_108 "Energy (AC) - DDS238-x ZN"
+# define PLUGIN_NAME_108 "NPK SENSOR 3P"
 # define PLUGIN_VALUENAME1_108 ""
 
 
@@ -141,16 +141,16 @@ boolean Plugin_108(uint8_t function, struct EventStruct *event, String& string) 
         P108_data->modbus.getStatistics(reads_pass, reads_crc_failed, reads_nodata);
         addHtml(strformat(F("%d/%d/%d"), reads_pass, reads_crc_failed, reads_nodata));
 
-        addFormSubHeader(F("Logged Values"));
-        p108_showValueLoadPage(P108_QUERY_Wh_imp, event);
-        p108_showValueLoadPage(P108_QUERY_Wh_exp, event);
-        p108_showValueLoadPage(P108_QUERY_Wh_tot, event);
-        p108_showValueLoadPage(P108_QUERY_V,      event);
-        p108_showValueLoadPage(P108_QUERY_A,      event);
-        p108_showValueLoadPage(P108_QUERY_W,      event);
-        p108_showValueLoadPage(P108_QUERY_VA,     event);
-        p108_showValueLoadPage(P108_QUERY_PF,     event);
-        p108_showValueLoadPage(P108_QUERY_F,      event);
+        // addFormSubHeader(F("Logged Values"));
+        // p108_showValueLoadPage(P108_QUERY_Wh_imp, event);
+        // p108_showValueLoadPage(P108_QUERY_Wh_exp, event);
+        // p108_showValueLoadPage(P108_QUERY_Wh_tot, event);
+        // p108_showValueLoadPage(P108_QUERY_V,      event);
+        // p108_showValueLoadPage(P108_QUERY_A,      event);
+        // p108_showValueLoadPage(P108_QUERY_W,      event);
+        // p108_showValueLoadPage(P108_QUERY_VA,     event);
+        // p108_showValueLoadPage(P108_QUERY_PF,     event);
+        // p108_showValueLoadPage(P108_QUERY_F,      event);
 
         // Can't clear totals, maybe because of modbus library can't write DWORD?
         // Disabled for now

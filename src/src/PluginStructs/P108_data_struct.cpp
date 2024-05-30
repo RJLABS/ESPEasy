@@ -19,9 +19,9 @@ bool P108_data_struct::init(ESPEasySerialPort port, const int16_t serial_rx, con
 
 const __FlashStringHelper* Plugin_108_valuename(uint8_t value_nr, bool displayString) {
   switch (value_nr) {
-    case P108_QUERY_V: return displayString ? F("Voltage (V)") : F("V");
-    case P108_QUERY_A: return displayString ? F("Current (A)") : F("A");
-    case P108_QUERY_W: return displayString ? F("Active Power (W)") : F("W");
+    case P108_QUERY_V: return displayString ? F("Nitrogen") : F("mg/kg");
+    case P108_QUERY_A: return displayString ? F("Phosphorus") : F("mg/kg");
+    case P108_QUERY_W: return displayString ? F("Kalium") : F("mg/kg");
     case P108_QUERY_VA: return displayString ? F("Reactive Power (VA)") : F("VA");
     case P108_QUERY_PF: return displayString ? F("Power Factor (Pf)") : F("Pf");
     case P108_QUERY_F: return displayString ? F("Frequency (Hz)") : F("Hz");
@@ -55,15 +55,13 @@ float p108_readValue(uint8_t query, struct EventStruct *event) {
   if ((nullptr != P108_data) && P108_data->isInitialized()) {
     switch (query) {
       case P108_QUERY_V:
-        value = P108_data->modbus.readHoldingRegister(0x0C, errorcode) / 10.0f;  // 0.1 V => V
+        value = P108_data->modbus.readHoldingRegister(0x001E, errorcode); 
         break;
       case P108_QUERY_A:
-        value = P108_data->modbus.readHoldingRegister(0x0D, errorcode) / 100.0f; // 0.01 A => A
+        value = P108_data->modbus.readHoldingRegister(0x001F, errorcode); 
         break;
       case P108_QUERY_W:
-        value =  P108_data->modbus.readHoldingRegister(0x0E, errorcode);
-
-        if (value > 32767) { value -= 65535; }
+        value =  P108_data->modbus.readHoldingRegister(0x0020, errorcode);
         break;
       case P108_QUERY_VA:
         value = P108_data->modbus.readHoldingRegister(0x0F, errorcode);
