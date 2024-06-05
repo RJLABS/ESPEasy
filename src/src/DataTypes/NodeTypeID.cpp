@@ -4,7 +4,7 @@
 const __FlashStringHelper* toNodeTypeDisplayString(uint8_t nodeType) {
   switch (nodeType)
   {
-    case NODE_TYPE_ID_ESP_EASY_STD:     return F("ESP Easy");
+    case NODE_TYPE_ID_ESP_EASY_STD:     return F("CHETREE");
     case NODE_TYPE_ID_ESP_EASYM_STD:    return F("ESP Easy Mega");
     case NODE_TYPE_ID_ESP_EASY32_STD:   return F("ESP Easy 32");
     case NODE_TYPE_ID_ESP_EASY32S2_STD: return F("ESP Easy 32-S2");

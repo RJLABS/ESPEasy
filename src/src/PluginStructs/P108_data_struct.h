@@ -17,8 +17,8 @@
 # define P108_QUERY4         PCONFIG(6)
 # define P108_DEPIN          CONFIG_PIN3
 
-# define P108_NR_OUTPUT_VALUES   VARS_PER_TASK
-# define P108_QUERY1_CONFIG_POS  2
+# define P108_NR_OUTPUT_VALUES   3 //VARS_PER_TASK
+# define P108_QUERY1_CONFIG_POS  3
 
 # define P108_QUERY_V       0
 # define P108_QUERY_A       1

@@ -197,7 +197,7 @@ boolean Plugin_023(uint8_t function, struct EventStruct *event, String& string)
           P023_data->sendCommand(0xC8);       // COMSCANDEC  Rotate screen 180 Deg
         }
 
-        P023_data->sendStrXY("ESP Easy ", 0, 0);
+        P023_data->sendStrXY("CHETREE ", 0, 0);
 
         if (validGpio(CONFIG_PIN3)) {
           pinMode(CONFIG_PIN3, INPUT_PULLUP);

@@ -37,7 +37,7 @@ void P012_data_struct::init() {
   // Setup LCD display
   lcd.init(); // initialize the lcd
   lcd.backlight();
-  lcd.print(F("ESP Easy"));
+  lcd.print(F("CHETREE"));
   createCustomChars();
 }
 

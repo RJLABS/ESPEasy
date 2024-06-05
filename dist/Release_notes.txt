@@ -8744,7 +8744,7 @@ Grovkillen (6):
       [docs] syntax error fixed.
       [docs] P052 sensair S8 hardware page updated
       [docs] Test if arrows (unicode) work with RTD
-      [docs] fixed "ESP Easy" logo margin bug
+      [docs] fixed "CHETREE" logo margin bug
 
 chunter1 (1):
       HX711 load cell plugin now supports dual channel support
