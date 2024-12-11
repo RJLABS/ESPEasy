@@ -78,8 +78,9 @@ const char Internal_commands_e[] PROGMEM =
 #endif // FEATURE_ETHERNET
 ;
 
-#define Int_cmd_ghij_offset ESPEasy_cmd_e::gateway
-const char Internal_commands_ghij[] PROGMEM =
+#define Int_cmd_fghij_offset ESPEasy_cmd_e::factoryreset
+const char Internal_commands_fghij[] PROGMEM =
+  "factoryreset|"
   "gateway|"
   "gpio|"
   "gpiotoggle|"
@@ -132,14 +133,17 @@ const char Internal_commands_m[] PROGMEM =
 #endif // ifndef BUILD_NO_DIAGNOSTIC_COMMANDS
 ;
 
-#define Int_cmd_n_offset ESPEasy_cmd_e::name
-const char Internal_commands_n[] PROGMEM =
+#define Int_cmd_no_offset ESPEasy_cmd_e::name
+const char Internal_commands_no[] PROGMEM =
   "name|"
   "nosleep|"
 #if FEATURE_NOTIFIER
   "notify|"
 #endif // #if FEATURE_NOTIFIER
   "ntphost|"
+#if FEATURE_DALLAS_HELPER && FEATURE_COMMAND_OWSCAN
+  "owscan|"
+#endif // if FEATURE_DALLAS_HELPER && FEATURE_COMMAND_OWSCAN
 ;
 
 #define Int_cmd_p_offset ESPEasy_cmd_e::password
@@ -186,7 +190,6 @@ const char Internal_commands_p[] PROGMEM =
 #define Int_cmd_r_offset ESPEasy_cmd_e::reboot
 const char Internal_commands_r[] PROGMEM =
   "reboot|"
-  "reset|"
   "resetflashwritecounter|"
   "restart|"
   "rtttl|"
@@ -301,12 +304,13 @@ const char* getInternalCommand_Haystack_Offset(const char firstLetter, int& offs
       offset   = static_cast<int>(Int_cmd_e_offset);
       haystack = Internal_commands_e;
       break;
+    case 'f':
     case 'g':
     case 'h':
     case 'i':
     case 'j':
-      offset   = static_cast<int>(Int_cmd_ghij_offset);
-      haystack = Internal_commands_ghij;
+      offset   = static_cast<int>(Int_cmd_fghij_offset);
+      haystack = Internal_commands_fghij;
       break;
     case 'l':
       offset   = static_cast<int>(Int_cmd_l_offset);
@@ -317,8 +321,9 @@ const char* getInternalCommand_Haystack_Offset(const char firstLetter, int& offs
       haystack = Internal_commands_m;
       break;
     case 'n':
-      offset   = static_cast<int>(Int_cmd_n_offset);
-      haystack = Internal_commands_n;
+    case 'o':
+      offset   = static_cast<int>(Int_cmd_no_offset);
+      haystack = Internal_commands_no;
       break;
     case 'p':
       offset   = static_cast<int>(Int_cmd_p_offset);

@@ -257,6 +257,8 @@ void updateUDPport(bool force)
 boolean runningUPDCheck = false;
 void checkUDP()
 {
+  if (!NetworkConnected())
+    return;
   if (Settings.UDPPort == 0) {
     return;
   }
@@ -264,6 +266,7 @@ void checkUDP()
   if (runningUPDCheck) {
     return;
   }
+  START_TIMER
 
   runningUPDCheck = true;
 
@@ -279,6 +282,11 @@ void checkUDP()
     if (portUDP.remotePort() == 123)
     {
       // unexpected NTP reply, drop for now...
+      while (portUDP.available()) {
+        // Do not call portUDP.flush() as that's meant to sending the packet (on ESP8266)
+        portUDP.read();
+      }
+
       runningUPDCheck = false;
       return;
     }
@@ -289,6 +297,8 @@ void checkUDP()
     // and then crash due to memory allocation failures
     if ((packetSize >= 2) && (packetSize < UDP_PACKETSIZE_MAX)) {
       // Allocate buffer to process packet.
+      // Resize it to be 1 byte larger so we can 0-terminate it 
+      // in case it is some plain text string
       std::vector<char> packetBuffer;
       packetBuffer.resize(packetSize + 1);
 
@@ -380,6 +390,7 @@ void checkUDP()
     portUDP.read();
   }
   runningUPDCheck = false;
+  STOP_TIMER(CHECK_UDP);
 }
 
 /*********************************************************************************************\
@@ -1079,6 +1090,14 @@ bool connectClient(WiFiClient& client, IPAddress ip, uint16_t port, uint32_t tim
     client.stop();
     return false;
   }
+#ifndef BUILD_NO_DEBUG
+  if (loglevelActiveFor(LOG_LEVEL_DEBUG)) {
+    addLog(LOG_LEVEL_DEBUG, strformat(
+      F("connectClient: '%s' port: %u"),
+      ip.toString().c_str(),
+      port));
+  }
+#endif
 
   // In case of domain name resolution error result can be negative.
   // https://github.com/esp8266/Arduino/blob/18f643c7e2d6a0da9d26ff2b14c94e6536ab78c1/libraries/Ethernet/src/Dns.cpp#L44
@@ -1088,6 +1107,15 @@ bool connectClient(WiFiClient& client, IPAddress ip, uint16_t port, uint32_t tim
   delay(0);
 
   if (!connected) {
+#ifndef BUILD_NO_DEBUG
+  if (loglevelActiveFor(LOG_LEVEL_DEBUG)) {
+    addLog(LOG_LEVEL_ERROR, strformat(
+      F("connectClient: connect failed to '%s' port: %u"),
+      ip.toString().c_str(),
+      port));
+  }
+#endif
+
     Scheduler.sendGratuitousARP_now();
     client.stop(); // Make sure to start over without some stale connection
   }

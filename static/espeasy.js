@@ -5,9 +5,9 @@
 var commonAtoms = ["And", "Or"];
 var commonKeywords = ["If", "Else", "Elseif", "Endif"];
 var commonCommands = ["AccessInfo", "Background", "Build", "ClearAccessBlock", "ClearRTCam", "Config", "ControllerDisable",
-  "ControllerEnable", "DateTime", "Debug", "Dec", "DeepSleep", "DisablePriorityTask", "DNS", "DST", "EraseSDKWiFi", "ExecuteRules", "Gateway", "I2Cscanner", "Inc",
+  "ControllerEnable", "DateTime", "Debug", "Dec", "DeepSleep", "DisablePriorityTask", "DNS", "DST", "EraseSDKWiFi", "ExecuteRules", "FactoryReset", "Gateway", "I2Cscanner", "Inc",
   "IP", "Let", "Load", "LogEntry", "LogPortStatus", "LoopTimerSet", "LoopTimerSet_ms", "MemInfo", "MemInfoDetail", "Name", "Password", "PostToHTTP", "Publish", "PublishR",
-  "Reboot", "Reset", "Save", "SendTo", "SendToHTTP", "SendToUDP", "Settings", "Subnet", "Subscribe", "TaskClear", "TaskClearAll",
+  "Reboot", "Save", "SendTo", "SendToHTTP", "SendToUDP", "Settings", "Subnet", "Subscribe", "TaskClear", "TaskClearAll",
   "TaskDisable", "TaskEnable", "TaskRun", "TaskValueSet", "TaskValueSetAndRun", "TimerPause", "TimerResume", "TimerSet", "TimerSet_ms", "TimeZone",
   "UdpPort", "UdpTest", "Unit", "UseNTP", "WdConfig", "WdRead", "WiFi", "WiFiAllowAP", "WiFiAPMode", "WiFiConnect", "WiFiDisconnect", "WiFiKey",
   "WiFiKey2", "WiFiMode", "WiFiScan", "WiFiSSID", "WiFiSSID2", "WiFiSTAMode",
@@ -31,6 +31,8 @@ var commonPlugins = [
   //P019
   "PCFGPIO", "PCFGPIOToggle", "PCFLongPulse", "PCFLongPulse_ms", "PCFPulse", "Status,PCF", "Monitor,PCF",
   "MonitorRange,PCF", "UnMonitorRange,PCF", "UnMonitor,PCF", "PCFGPIORange", "PCFGPIOpattern", "PCFMode", "PCFmodeRange",
+  //P020/P044
+  "SerialSend", "SerialSendMix", "Ser2NetClientSend",
   //P022
   "pcapwm", "pcafrq", "mode2",
   //P023
@@ -43,6 +45,8 @@ var commonPlugins = [
   "NeoPixel", "NeoPixelAll", "NeoPixelLine", "NeoPixelHSV", "NeoPixelAllHSV", "NeoPixelLineHSV", "NeoPixelBright",
   //P048
   "MotorShieldCmd,DCMotor", "MotorShieldCmd,Stepper",
+  //P049
+  "MHZCalibrateZero", "MHZReset", "MHZABCEnable", "MHZABCDisable",
   //P052
   "Sensair_SetRelay",
   //P053
@@ -65,6 +69,8 @@ var commonPlugins = [
   "GPS", "GPS,Sleep", "GPS,Wake", "GPS#GotFix", "GPS#LostFix", "GPS#Travelled",
   //P086
   "homieValueSet",
+  //P087
+  "SerialProxy_Write", "SerialProxy_WriteMix", "SerialProxy_Test",
   //P088
   "HeatPumpir",
   //P093
@@ -112,8 +118,12 @@ var commonPlugins = [
   "ld2410", "ld2410,factoryreset", "ld2410,logall",
   //P162
   "digipot", "digipot,reset", "digipot,shutdown", "digipot,",
+  //P165
+  "7dextra", "7dbefore", "7dgroup", "7digit", "7color", "7digitcolor", "7groupcolor",
   //P166
   "gp8403", "gp8403,volt,", "gp8403,mvolt,", "gp8403,range,", "gp8403,preset,", "gp8403,init,",
+  //P167
+  "sen5x", "sen5x,startclean", "sen5x,techlog,",
 ];
 var pluginDispKind = [
   //P095

@@ -59,6 +59,8 @@ enum class ESPEasy_cmd_e : uint8_t {
   ethwifimode,
 #endif // FEATURE_ETHERNET
 
+  factoryreset,
+
   gateway,
   gpio,
   gpiotoggle,
@@ -112,6 +114,10 @@ enum class ESPEasy_cmd_e : uint8_t {
 #endif // #if FEATURE_NOTIFIER
   ntphost,
 
+#if FEATURE_DALLAS_HELPER && FEATURE_COMMAND_OWSCAN
+  owscan,
+#endif // if FEATURE_DALLAS_HELPER && FEATURE_COMMAND_OWSCAN
+
   password,
 #ifdef USES_P019
   pcfgpio,
@@ -151,7 +157,6 @@ enum class ESPEasy_cmd_e : uint8_t {
   pwm,
 
   reboot,
-  reset,
   resetflashwritecounter,
   restart,
   rtttl,

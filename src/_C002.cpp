@@ -42,6 +42,9 @@ bool CPlugin_002(CPlugin::Function function, struct EventStruct *event, String& 
       proto.usesExtCreds = true;
       proto.defaultPort  = 1883;
       proto.usesID       = true;
+      #if FEATURE_MQTT_TLS
+      proto.usesTLS      = true;
+      #endif
       break;
     }
 
@@ -107,7 +110,7 @@ bool CPlugin_002(CPlugin::Function function, struct EventStruct *event, String& 
               switch (Settings.getPluginID_for_task(x).value) {
                 case 1: // temp solution, if input switch, update state
                 {
-                  action = strformat(F("gpio,%d,%d"), x, static_cast<int>(nvalue));
+                  action = strformat(F("gpio,%d,%d"), Settings.TaskDevicePin1[x], static_cast<int>(nvalue));
                   break;
                 }
                 case 29: // temp solution, if plugin 029, set gpio

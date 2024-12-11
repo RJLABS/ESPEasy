@@ -1,7 +1,7 @@
 #include "../DataStructs/UserVarStruct.h"
 
+#include "../DataStructs/ESPEasy_EventStruct.h"
 #include "../DataStructs/TimingStats.h"
-
 #include "../ESPEasyCore/ESPEasy_Log.h"
 #include "../Globals/Cache.h"
 #include "../Globals/Plugins.h"
@@ -358,10 +358,11 @@ void UserVarStruct::clear_computed(taskIndex_t taskIndex)
 
 void UserVarStruct::markPluginRead(taskIndex_t taskIndex)
 {
+  struct EventStruct TempEvent(taskIndex);
   for (taskVarIndex_t varNr = 0; validTaskVarIndex(varNr); ++varNr) {
     if (Cache.hasFormula_with_prevValue(taskIndex, varNr)) {
       const uint16_t key = makeWord(taskIndex, varNr);
-      _prevValue[key] = formatUserVarNoCheck(taskIndex, varNr);
+      _prevValue[key] = formatUserVarNoCheck(&TempEvent, varNr);
     }
   }
 }
@@ -378,7 +379,10 @@ const TaskValues_Data_t * UserVarStruct::getRawOrComputed(
     if ((it == _computed.end()) || !it->second.isSet(varNr)) {
       // Try to compute values which do have a formula but not yet a 'computed' value cached.
       // FIXME TD-er: This may yield unexpected results when formula contains references to %pvalue%
-      const int nrDecimals = Cache.getTaskDeviceValueDecimals(taskIndex, varNr);
+
+
+      // Should not apply set nr. of decimals when calculating a formula
+      const uint8_t nrDecimals = 254;
       const String value   = getAsString(taskIndex, varNr, sensorType, nrDecimals, true);
 
       constexpr bool applyNow = true;
@@ -476,7 +480,9 @@ bool UserVarStruct::applyFormulaAndSet(taskIndex_t                     taskIndex
   TaskValues_Data_t tmp;
 
   tmp.set(varNr, value, sensorType);
-  const uint8_t nrDecimals = Cache.getTaskDeviceValueDecimals(taskIndex, varNr);
+
+  // Should not apply set nr. of decimals when calculating a formula
+  const uint8_t nrDecimals = 254;
   const String  value_str  = tmp.getAsString(varNr, sensorType, nrDecimals);
 
   constexpr bool applyNow = false;
