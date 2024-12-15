@@ -26,7 +26,7 @@
 #define FEATURE_ESPEASY_P2P             1  // (1/0) enables the ESP Easy P2P protocol
 #define FEATURE_ARDUINO_OTA             1  // enables the Arduino OTA capabilities
 #define FEATURE_THINGSPEAK_EVENT        0  // generate an event when requesting last value of a field in thingspeak via SendToHTTP(e.g. sendToHTTP,api.thingspeak.com,80,/channels/1667332/fields/5/last)
-#define FEATURE_SD                  	  1  // Enable SD card support
+#define FEATURE_SD                  	  0  // Enable SD card support
 // #define FEATURE_DOWNLOAD             1  // Enable downloading a file from an url
 
 #ifdef BUILD_GIT
@@ -36,8 +36,8 @@
 //#define BUILD_GIT           "My Build: "  __DATE__ " "  __TIME__
 
 
-#define DEFAULT_NAME        "c3core"                        // Enter your device friendly name
-#define UNIT                1                                        // Unit Number
+#define DEFAULT_NAME        "C3CORE"                        // Enter your device friendly name
+#define UNIT                03                                        // Unit Number
 #define DEFAULT_DELAY       60                                       // Sleep Delay in seconds
 
 // --- Wifi AP Mode (when your Wifi Network is not reachable) ----------------------------------------
@@ -48,7 +48,7 @@
 // --- Wifi Client Mode -----------------------------------------------------------------------------
 #define DEFAULT_SSID                         "c3prod_4G"             // Enter your network SSID
 #define DEFAULT_KEY                          "01234567890"          // Enter your network WPA key
-#define DEFAULT_SSID2                        "chetree"                    // Enter your fallback network SSID
+#define DEFAULT_SSID2                        "dd-wrt"                    // Enter your fallback network SSID
 #define DEFAULT_KEY2                         "#12345678"                    // Enter your fallback network WPA key
 #define DEFAULT_WIFI_INCLUDE_HIDDEN_SSID     true                   // Allow to connect to hidden SSID APs
 #define DEFAULT_USE_STATIC_IP                false                   // (true|false) enabled or disabled static IP
@@ -285,7 +285,7 @@
 #define MENU_INDEX_CONTROLLERS_VISIBLE   true
 #define MENU_INDEX_HARDWARE_VISIBLE      true
 #define MENU_INDEX_DEVICES_VISIBLE       true
-#define MENU_INDEX_RULES_VISIBLE         false
+#define MENU_INDEX_RULES_VISIBLE         true
 #define MENU_INDEX_NOTIFICATIONS_VISIBLE true
 #define MENU_INDEX_TOOLS_VISIBLE         true
 
