@@ -204,9 +204,10 @@ bool MQTTConnect(controllerIndex_t controller_idx)
 
   //  mqtt = WiFiClient(); // workaround see: https://github.com/esp8266/Arduino/issues/4497#issuecomment-373023864
   delay(0);
+# if FEATURE_MQTT_TLS
+
   uint16_t mqttPort = ControllerSettings->Port;
 
-# if FEATURE_MQTT_TLS
   mqtt_tls_last_errorstr.clear();
   mqtt_tls_last_error = 0;
   const TLS_types TLS_type = ControllerSettings->TLStype();
@@ -254,7 +255,7 @@ bool MQTTConnect(controllerIndex_t controller_idx)
       mqtt.setTimeout(timeout); // in msec as it should be!
   #  endif // ifdef MUSTFIX_CLIENT_TIMEOUT_IN_SECONDS
       MQTTclient.setClient(mqtt);
-      MQTTclient.setKeepAlive(10);
+      MQTTclient.setKeepAlive(ControllerSettings->KeepAliveTime);
       MQTTclient.setSocketTimeout(timeout);
       break;
     }
@@ -359,7 +360,7 @@ bool MQTTConnect(controllerIndex_t controller_idx)
     mqtt_tls->setBufferSizes(1024, 1024);
     #  endif // ifdef ESP8266
     MQTTclient.setClient(*mqtt_tls);
-    MQTTclient.setKeepAlive(10);
+    MQTTclient.setKeepAlive(ControllerSettings->KeepAliveTime);
     MQTTclient.setSocketTimeout(timeout);
 
 
@@ -393,7 +394,7 @@ bool MQTTConnect(controllerIndex_t controller_idx)
 #  endif // ifdef MUSTFIX_CLIENT_TIMEOUT_IN_SECONDS
 
   MQTTclient.setClient(mqtt);
-  MQTTclient.setKeepAlive(10);
+  MQTTclient.setKeepAlive(ControllerSettings->KeepAliveTime);
   MQTTclient.setSocketTimeout(timeout);
 # endif // if FEATURE_MQTT_TLS
 

@@ -49,3 +49,16 @@
 .. |P175_maintainer| replace:: `.`
 .. |P175_compileinfo| replace:: `.`
 .. |P175_usedlibraries| replace:: `.`
+
+.. |P176_name| replace:: :cyan:`Victron VE.Direct`
+.. |P176_type| replace:: :cyan:`Communication`
+.. |P176_typename| replace:: :cyan:`Communication - Victron VE.Direct`
+.. |P176_porttype| replace:: `.`
+.. |P176_status| replace:: :yellow:`ENERGY`
+.. |P176_github| replace:: P176_VE_Direct.ino
+.. _P176_github: https://github.com/letscontrolit/ESPEasy/blob/mega/src/_P176_VE_Direct.ino
+.. |P176_usedby| replace:: `Victron Energy devices supporting the VE.Direct protocol`
+.. |P176_shortinfo| replace:: `Victron VE.Direct protocol reader`
+.. |P176_maintainer| replace:: `tonhuisman`
+.. |P176_compileinfo| replace:: `.`
+.. |P176_usedlibraries| replace:: `.`
